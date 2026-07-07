@@ -67,3 +67,30 @@ class Gemini(BaseProvider):
 
         return response.json()['candidates'][0]['content']['parts'][0]['text']
 
+class HuggingFace(BaseProvider):
+    def __init__(self,api_key):
+        super().__init__(api_key)
+        self.url = "https://router.huggingface.co/v1/chat/completions"
+
+    async def fetch(self,prompt):
+        async with httpx.AsyncClient(timeout=10) as client:
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json"
+            }
+            body = {
+                "model": "openai/gpt-oss-120b",   
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature":0.7,
+                "max_tokens":200
+            }
+            response = await client.post(
+                self.url,
+                headers=headers,
+                json=body
+            )
+            
+
+        
+            response.raise_for_status()
+        return response.json()['choices'][0]['message']['content']

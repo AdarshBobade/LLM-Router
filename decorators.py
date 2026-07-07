@@ -14,3 +14,5 @@ def retry(times=3 , delay=1):
             raise Exception('All retries failed !')
         return wrapper
     return decorator
+
+# def latency
