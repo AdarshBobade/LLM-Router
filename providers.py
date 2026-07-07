@@ -1,5 +1,6 @@
 import httpx
 from abc import ABC , abstractmethod
+from decorators import retry
 
 class BaseProvider(ABC):
     def __init__(self,api_key):
@@ -13,6 +14,8 @@ class Groq(BaseProvider):
     def __init__(self,api_key):
         super().__init__(api_key)
         self.url = 'https://api.groq.com/openai/v1/chat/completions'
+
+    @retry(times=3)    
     async def fetch(self,prompt):
         async with httpx.AsyncClient(timeout=10) as client:
             
@@ -39,7 +42,7 @@ class Gemini(BaseProvider):
                     "https://generativelanguage.googleapis.com/v1beta/"
                     "models/gemini-2.5-flash:generateContent"
                     )
-
+    @retry(times=3)
     async def fetch(self,prompt):
         async with httpx.AsyncClient(timeout=10) as client:
             headers = {
