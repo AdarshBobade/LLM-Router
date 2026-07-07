@@ -1,0 +1,4 @@
+# .env to hide API Key
+.env
+#venv/
+.venv
