@@ -18,13 +18,21 @@ async def main():
     llm2 = Gemini(gemini_api)
     llm3 = HuggingFace(hf_api)
     async with asyncio.TaskGroup() as tg:
-        groq_response = tg.create_task(llm1.fetch(prompt))
-        gemini_response = tg.create_task(llm2.fetch(prompt))
-        hf_response = tg.create_task(llm3.fetch(prompt))
+        task1 = tg.create_task(llm1.fetch(prompt))
+        task2 = tg.create_task(llm2.fetch(prompt))
+        task3 = tg.create_task(llm3.fetch(prompt))
     
-    print('Groq ->', groq_response.result())
-    print('Gemini ->' , gemini_response.result())
-    print('HuggingFace ->' , hf_response.result())
+    groq_response , groq_latency = task1.result()
+    gemini_response , gemini_latency = task2.result()
+    hf_response , hf_latency = task3.result()
+
+    print('Groq ->', groq_response)
+    print('Gemini ->' , gemini_response)
+    print('HuggingFace ->' , hf_response)
+    print('time_elapsed by Groq :' , groq_latency)
+    print('time_elapsed by Gemini :' , gemini_latency)
+    print('time_elapsed by HuggingFace :' , hf_latency)
+
 
 asyncio.run(main())
 
